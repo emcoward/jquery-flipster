@@ -1,7 +1,7 @@
 /*! Flipster
 *
 * @description: A coverflow emulator
-* @source:
+* @source: https://github.com/emcoward/jquery-flipster
 * @version: '0.1.0'
 *
 * @author: Nomensa
@@ -206,7 +206,7 @@
                 var currentWidth = currentItem.outerWidth();
                 var currentLeft = (_flipItems.index(currentItem)*currentWidth)/2 +spacer/2;
 
-                for (i = 0; i < _flipItems.length; i++) {
+                for (var i = 0; i < _flipItems.length; i++) {
                     var thisItem = $(_flipItems[i]);
                     var thisWidth = thisItem.outerWidth();
 
@@ -287,7 +287,7 @@
             // Basic setup
             self.element.addClass("flipster flipster-active flipster-"+self.options.style).css("visiblity","hidden");
             _flipItemsOuter = self.element.find(self.options.itemContainer).addClass("flip-items");
-            _flipItems = _flipItemsOuter.find(self.options.itemSelector).addClass("flip-item flip-hidden").wrapInner("<div class='flip-content' />");
+            _flipItems = _flipItemsOuter.find(self.options.itemSelector).addClass("flip-item").wrapInner("<div class='flip-content' />");
 
             //Browsers that don't support CSS3 transforms get compatibility:
             var isIEmax8 = ('\v' === 'v'); //IE <= 8
@@ -330,7 +330,7 @@
 
 
             // Attach event bindings.
-            win.on('debouncedresize', function (){
+            win.resize(function(){
                 resize();
                 center();
             });
