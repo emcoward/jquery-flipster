@@ -76,6 +76,7 @@
         }
 
         function buildNav() {
+
             if ( self.options.enableNav && _flipItems.length > 1 ) {
                 var navCategories = [],
                     navItems = [],
@@ -88,6 +89,7 @@
 
                     if ( typeof category !== 'undefined' ) {
                         if ( $.inArray(category,navCategories) < 0 ) {
+
                             navCategories.push(category);
                             navList[category] = '<li class="flip-nav-category"><a href="#" class="flip-nav-category-link" data-flip-category="'+category+'">'+category+'</a>\n<ul class="flip-nav-items">\n';
                         }
@@ -461,6 +463,7 @@
                 .removeAttr('style')
                 .removeClass("flip-prev flip-next flip-item flip-current flip-past flip-hidden flip-future no-transition");
             this.element.addClass('flipster').removeAttr('style');
+            this.element.find('.flipter-nav').remove();
     };
 
     $.fn[pluginName] = function(options) {
