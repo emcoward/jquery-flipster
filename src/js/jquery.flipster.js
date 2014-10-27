@@ -32,6 +32,9 @@
         enableNavButtons:       false, // If true, flipster will insert Previous / Next buttons
 
         onItemSwitch:               function(){}, // Callback function when items are switches
+        breakpoint: 768,
+        breakpointClass: 'mobile'
+
     };
 
     function Flipster(element, options) {
@@ -65,7 +68,9 @@
         function resize() {
             _flipItemsOuter.css("height",_flipItems.height());
             self.element.css("height","auto");
-            if ( self.options.style === 'carousel' ) { _flipItemsOuter.width(_flipItems.width()); }
+            if ( self.options.style === 'carousel' ) {
+                _flipItemsOuter.width(_flipItems.width());
+            }
         }
 
         function buildNav() {
@@ -240,7 +245,7 @@
 
             resize();
             updateNav();
-            self.options.onItemSwitch.call(this);
+            self.options.onItemSwitch.call(self);
         }
 
         function jump(to) {
@@ -262,15 +267,14 @@
             }
         }
 
-        function init() {
+        function buildCoverflow() {
+
         /* Untested Compatibility */
 
             // Basic setup
             self.element.addClass("flipster flipster-active flipster-"+self.options.style).css("visiblity","hidden");
             _flipItemsOuter = self.element.find(self.options.itemContainer).addClass("flip-items");
             _flipItems = _flipItemsOuter.find(self.options.itemSelector).addClass("flip-item flip-hidden").wrapInner("<div class='flip-content' />");
-
-            console.log(_flipItems);
 
             //Browsers that don't support CSS3 transforms get compatibility:
             var isIEmax8 = ('\v' === 'v'); //IE <= 8
@@ -313,7 +317,10 @@
 
 
             // Attach event bindings.
-            win.resize(function(){ resize(); center(); });
+            win.on('debouncedresize', function (){
+                resize();
+                center();
+            });
 
 
             // Navigate directly to an item by clicking
@@ -385,12 +392,34 @@
                     _startTouchX = 0;
                 });
             }
+
         }
 
-        // Initialize if flipster is not already active.
-        if (!self.element.hasClass("flipster-active") ) {
-            init();
+        function init() {
+
+            setup();
+
+            function setup() {
+                var windowWidth = win.width();
+                if (windowWidth >= self.options.breakpoint) {
+                    if (!self.element.hasClass("flipster-active") ) {
+                        self.element.addClass('flipster-active').removeClass('flipster-inactive');
+                        buildCoverflow();
+                    }
+                } else {
+                    if (!self.element.hasClass("flipster-inactive") ) {
+                        self.element.addClass('flipster-inactive').removeClass('flipster-active');
+                        self.destroy();
+                    }
+                }
+            }
+
+            $(window).on('debouncedresize', function() {
+                setup();
+            });
         }
+
+        init();
 
     }
 
@@ -402,7 +431,6 @@
         Public API method for destroying tabs
     */
             var win = $(window);
-            console.log('destroy');
 
             $(this.options.itemSelector).each(function() {
                 $(this).find('.flip-content > *').unwrap();
