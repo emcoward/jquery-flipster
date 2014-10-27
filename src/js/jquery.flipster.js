@@ -29,6 +29,7 @@
         enableTouch:                true, // Enable swipe navigation for touch devices
 
         enableNav:                  false, // If true, flipster will insert an unordered list of the slides
+        navPosition:      'before', // [before|after] Changes the position of the navigation before or after the flipsterified items - case-insensitive
         enableNavButtons:       false, // If true, flipster will insert Previous / Next buttons
 
         onItemSwitch:               function(){}, // Callback function when items are switches
@@ -50,16 +51,17 @@
 
         var win = $(window);
 
-        var _flipItemsOuter;
-        var _flipItems;
-        var _flipNav;
-        var _flipNavItems;
-        var _current = 0;
-
-        var _startTouchX = 0;
-        var _actionThrottle = 0;
-        var _throttleTimeout;
-        var compatibility;
+        var _flipItemsOuter,
+            _flipItems,
+            _flipNav,
+            _flipNavItems,
+            _current = 0,
+            link,
+            navDisplay,
+            _startTouchX = 0,
+            _actionThrottle = 0,
+            _throttleTimeout,
+            compatibility;
 
         function removeThrottle() {
             _actionThrottle = 0;
@@ -93,10 +95,11 @@
 
                     if ( $.inArray(itemId,navItems) < 0 ) {
                         navItems.push(itemId);
-                        link = '<a href="#'+itemId+'" class="flip-nav-item-link">'+itemTitle+'</a></li>\n';
+                        var link = '<a href="#'+itemId+'" class="flip-nav-item-link"><span class="flip-nav-item-link-child">'+itemTitle+'</span></a></li>\n';
                         if ( typeof category !== 'undefined' ) {
                             navList[category] = navList[category] + '<li class="flip-nav-item">' + link;
-                        } else {
+                        }
+                        else {
                             navList[itemId] = '<li class="flip-nav-item no-category">' + link;
                         }
                     }
@@ -106,10 +109,18 @@
                 for ( var catIndex in navCategories ) {
                     navList[navCategories[catIndex]] = navList[navCategories[catIndex]] + "</ul>\n</li>\n";
                 }
-                for ( var navIndex in navList ) { navDisplay += navList[navIndex]; }
+                for ( var navIndex in navList ) {
+                    navDisplay += navList[navIndex];
+                }
+
                 navDisplay += '</ul>';
 
-                _flipNav = $(navDisplay).prependTo(self.element);
+                if (self.options.navPosition.toLowerCase() != "after") {
+                    _flipNav = $(navDisplay).prependTo(self.element);
+                } else {
+                    _flipNav = $(navDisplay).appendTo(self.element);
+                }
+
                 _flipNavItems = _flipNav.find("a").on("click",function(e){
                     var target;
                     if ( $(this).hasClass("flip-nav-category-link") ) {
@@ -128,7 +139,7 @@
 
         function updateNav() {
             if ( self.options.enableNav && _flipItems.length > 1 ) {
-                currentItem = $(_flipItems[_current]);
+                var currentItem = $(_flipItems[_current]);
                 _flipNav.find(".flip-nav-current").removeClass("flip-nav-current");
                 _flipNavItems.filter("[href='#"+currentItem.attr("id")+"']").addClass("flip-nav-current");
                 _flipNavItems.filter("[data-flip-category='"+currentItem.data("flip-category")+"']").parent().addClass("flip-nav-current");

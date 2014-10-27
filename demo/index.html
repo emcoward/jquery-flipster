@@ -79,7 +79,9 @@
         var demo = {};
             demo.flipster = $(".flipster").flipster({
                 style: 'carousel',
-                start: 0
+                start: 0,
+                enableNav: true,
+                navPosition: 'after'
         });
 
         $('#button-destroy').click(function() {
