@@ -74,7 +74,28 @@
 
     $(function(){
 
+ var ieVersion = (function() {
+/*
+Allows you to detect the version of IE being used
+*/
+var version = 3;
+var div = document.createElement('div');
 
+div.innerHTML = '<!--[if gt IE ' + version + ']>1<![endif]-->';
+
+while (div.innerHTML === '1') {
+version = ++version;
+div.innerHTML = '<!--[if gt IE ' + version + ']>1<![endif]-->';
+}
+return version > 4 ? version: false;
+})();
+
+
+if (Modernizr.mq('only all') || ieVersion === 7 || ieVersion === 8) {
+/*
+Browser must support Media Queries or be IE7 or IE8 with Respond.js
+*/
+// Ensure code blocks are highlighted properly...
         // Public API Examples
         var demo = {};
             demo.flipster = $(".flipster").flipster({
@@ -87,6 +108,9 @@
             console.log('click');
             demo.flipster.data('plugin_flipster').destroy();
         });
+}
+
+
     });
 
 -->
